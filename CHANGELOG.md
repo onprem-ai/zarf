@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.77.1](https://github.com/zarf-dev/zarf/compare/v0.77.0...v0.77.1) (2026-06-01)
+
+
+### Bug Fixes
+
+* **tools,wait:** handle context propagation for networking calls ([#4925](https://github.com/zarf-dev/zarf/issues/4925)) ([42dba94](https://github.com/zarf-dev/zarf/commit/42dba94122371cfb53132290e375be83f309d8c7))
+
 ## [0.77.0](https://github.com/zarf-dev/zarf/compare/v0.76.0...v0.77.0) (2026-05-28)
 
 

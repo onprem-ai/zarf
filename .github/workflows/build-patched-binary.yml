@@ -1,0 +1,35 @@
+name: Build patched zarf binary
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout fix branch
+        uses: actions/checkout@v4
+        with:
+          ref: fix/adopt-existing-take-ownership
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Build linux/amd64
+        run: |
+          CLI_VERSION=$(git describe --tags --always)
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+            -ldflags="-s -w -X 'github.com/zarf-dev/zarf/src/config.CLIVersion=${CLI_VERSION}-patched'" \
+            -o zarf-patched-linux-amd64 .
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: zarf-patched-linux-amd64
+          path: zarf-patched-linux-amd64

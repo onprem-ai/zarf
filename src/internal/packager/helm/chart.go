@@ -302,6 +302,11 @@ func installChart(ctx context.Context, zarfChart v1alpha1.ZarfChart, chart *char
 	client.ServerSideApply = zarfChart.GetServerSideApply() != "false"
 	client.ForceConflicts = shouldForceConflicts(zarfChart.GetServerSideApply(), nil, opts.ForceConflicts)
 
+	// When adopting existing resources, tell Helm to skip ownership validation
+	// and take ownership of pre-existing resources (CRDs, secrets, etc.).
+	// Fixes: https://github.com/zarf-dev/zarf/issues/4436
+	client.TakeOwnership = opts.AdoptExistingResources
+
 	// Perform the loadedChart installation.
 	return client.RunWithContext(ctx, chart, chartValues)
 }
@@ -345,6 +350,11 @@ func upgradeChart(ctx context.Context, zarfChart v1alpha1.ZarfChart, chart *char
 	client.PostRenderer = postRender
 
 	client.MaxHistory = maxHelmHistory
+
+	// When adopting existing resources, tell Helm to skip ownership validation
+	// and take ownership of pre-existing resources.
+	// Fixes: https://github.com/zarf-dev/zarf/issues/4436
+	client.TakeOwnership = opts.AdoptExistingResources
 
 	// Perform the loadedChart upgrade.
 	return client.RunWithContext(ctx, zarfChart.ReleaseName, chart, chartValues)
